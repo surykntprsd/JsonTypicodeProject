@@ -5,7 +5,7 @@
 <listeners>
 	<listener class-name="com.typicode.jsonph.utilities.Listeners" />
 </listeners>
-	<test thread-count="5" name="JsonSuite">
+	<test thread-count="5" name="JsonSuiteListener">
 		<classes>
 			<class name="com.typicode.jsonph.testCases.TC001_Validate_Workflow" />
 		</classes>

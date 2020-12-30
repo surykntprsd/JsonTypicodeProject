@@ -45,6 +45,7 @@
 				<version>0.8.5</version>
 				<executions>
 					<execution>
+						<id>prepare-jacoco-agent</id>
 						<goals>
 							<goal>prepare-agent</goal>
 						</goals>
@@ -56,7 +57,7 @@
 							<goal>report</goal>
 						</goals>
 						<configuration>
-							<outputDirectory>target/jacoco-report</outputDirectory>
+							<outputDirectory>target/code-coverage-report</outputDirectory>
 						</configuration>
 					</execution>
 				</executions>
