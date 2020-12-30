@@ -45,7 +45,7 @@ public class TC001_Validate_Workflow extends TestBase{
 		httpRequest.header("Cache-Control", "no-cache");
 
 		// Call the GET method of request
-		logger.info("Call the GET Method of request");
+		logger.info("Call the GET Method of request with uri " + uri);
 		response = httpRequest.request(Method.GET, uri);
 		
 		Thread.sleep(2000);   // Can be removed, kept for stability
@@ -89,19 +89,30 @@ public class TC001_Validate_Workflow extends TestBase{
 		requestCall(parameter);
 		String responseBody = response.getBody().asString();
 		JSONArray arr= JsonPath.read(responseBody, "$.*.id");
-		parameter = comments + "?";
+		searchForComments(arr);
+		
+	}
+	
+	void searchForComments(JSONArray arr) throws InterruptedException
+	{	
+		String parameter = comments + "?";
 		for(int i=0;i<arr.size(); i++) {
 			parameter += "postId=" + arr.get(i).toString();
 			if(i != arr.size()-1) 
 				parameter += "&";
 		}
 		requestCall(parameter);
-		responseBody = response.getBody().asString();
+		String responseBody = response.getBody().asString();
 		arr= JsonPath.read(responseBody, "$.*.email");
-		for(int i=0;i<arr.size(); i++) {
-			Assert.assertEquals(EmailValidator.getInstance().isValid(arr.get(i).toString()) , true);
-		}
+		validateEmail(arr);		
 		
+	}
+	
+	void validateEmail(JSONArray arr) throws InterruptedException
+	{
+		for(int i=0;i<arr.size(); i++) {
+			Assert.assertEquals(EmailValidator.getInstance().isValid(arr.get(i).toString()) , true , "Email : "+ arr.get(i).toString() + "is not valid");
+		}
 	}
 	
 	
