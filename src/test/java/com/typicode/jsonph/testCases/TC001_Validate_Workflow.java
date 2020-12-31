@@ -55,17 +55,20 @@ public class TC001_Validate_Workflow extends TestBase{
 	@Test
 	void checkWorkFlow() throws InterruptedException
 	{
-		logger.info("Checking status of the response");
+		logger.info("Checking status of the response started");
 		statusCode = response.getStatusCode();
         Assert.assertEquals(statusCode, 200, "Status Code is not 200");
+        logger.info("Checking status of the response completed");
         checkForUser(name);
 	}
 	
 	
 	void checkForUser(String userName) throws InterruptedException
 	{	
+		logger.info("Checking for user '" + userName + "' started");
 		String responseBody = response.getBody().asString();
 		Assert.assertEquals(responseBody.contains(userName) , true , "Response doesnot contain user: "+userName);
+		logger.info("Checking for user completed");
 		if(responseBody.contains(userName)) {
 			checkForUserId(userName);
 		}
@@ -73,11 +76,14 @@ public class TC001_Validate_Workflow extends TestBase{
 	
 	void checkForUserId(String userName) throws InterruptedException
 	{	
+		logger.info("Checking for userId with user '" + userName + "' started");
 		String parameter = users + "?username=" + userName;
 		requestCall(parameter);
 		String responseBody = response.getBody().asString();
 		JSONArray arr= JsonPath.read(responseBody, "$.*.id");
+		logger.info("Checking for userId with user completed");
 		String userId = arr.get(0).toString();
+		logger.info("UserId for user '" + userName + "' is " + userId);
 		searchForPost(userId);
 		
 		
@@ -85,16 +91,19 @@ public class TC001_Validate_Workflow extends TestBase{
 	
 	void searchForPost(String userId) throws InterruptedException
 	{	
+		logger.info("Searching for post with userId " + userId + " started");
 		String parameter = posts + "?userId=" + userId;
 		requestCall(parameter);
 		String responseBody = response.getBody().asString();
 		JSONArray arr= JsonPath.read(responseBody, "$.*.id");
+		logger.info("Searching for post completed");
 		searchForComments(arr);
 		
 	}
 	
 	void searchForComments(JSONArray arr) throws InterruptedException
 	{	
+		logger.info("Searching for comments started");
 		String parameter = comments + "?";
 		for(int i=0;i<arr.size(); i++) {
 			parameter += "postId=" + arr.get(i).toString();
@@ -103,6 +112,7 @@ public class TC001_Validate_Workflow extends TestBase{
 		}
 		requestCall(parameter);
 		String responseBody = response.getBody().asString();
+		logger.info("Searching for comments completed");
 		arr= JsonPath.read(responseBody, "$.*.email");
 		validateEmail(arr);		
 		
@@ -110,9 +120,11 @@ public class TC001_Validate_Workflow extends TestBase{
 	
 	void validateEmail(JSONArray arr) throws InterruptedException
 	{
+		logger.info("Verification of email started");
 		for(int i=0;i<arr.size(); i++) {
 			Assert.assertEquals(EmailValidator.getInstance().isValid(arr.get(i).toString()) , true , "Email : "+ arr.get(i).toString() + "is not valid");
 		}
+		logger.info("Verification of email completed");
 	}
 	
 	
